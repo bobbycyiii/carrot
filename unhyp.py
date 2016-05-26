@@ -204,12 +204,9 @@ def isFault(surf):
   if M1.isConnected():
     return True
   assert M1.splitIntoComponents() == 2
+  M1.intelligentSimplify()
   M2 = M1.getFirstTreeChild()
   M3 = M2.getNextTreeSibling()
-  M2.idealToFinite()
-  M2.intelligentSimplify()
-  M3.idealToFinite()
-  M3.intelligentSimplify()
   if s.hasRealBoundary():
     if x == 1:
       # s is a disc

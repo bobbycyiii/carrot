@@ -258,12 +258,9 @@ Otherwise, it separates, and we should
 look at the two pieces.
 <<is fault?>>=
   assert M1.splitIntoComponents() == 2
+  M1.intelligentSimplify()
   M2 = M1.getFirstTreeChild()
   M3 = M2.getNextTreeSibling()
-  M2.idealToFinite()
-  M2.intelligentSimplify()
-  M3.idealToFinite()
-  M3.intelligentSimplify()
 @
 We run the tests now depending
 on whether [[s]] is closed or bounded,
