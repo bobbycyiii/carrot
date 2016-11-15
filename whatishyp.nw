@@ -1,5 +1,6 @@
-\documentclass[10pt,twocolumn]{article}
-\usepackage{noweb,hyperref,amsmath,amsthm,amssymb}
+\documentclass{article}
+\usepackage{noweb,hyperref,amsmath,amsthm,amssymb,url}
+\bibliographystyle{plain}
 \noweboptions{smallcode,longchunks}
 \newtheorem{Thm}{Theorem}
 \newtheorem{Cor}[Thm]{Corollary}
@@ -83,8 +84,8 @@ a 3-ball, and does not cut off one $D^2 \times S^1.$
 \end{Def}
 @
 A proof of Corollary \ref{cor:hyp} is
-sketched in \cite{Me}. Also found 
-in \cite{Me} is the following algorithm,
+sketched in \cite{Har14}. Also found 
+in \cite{Har14} is the following algorithm,
 which we implement in [[Regina]]:
 \begin{verbatim}
 l := fundamental normal surfaces in T
@@ -692,7 +693,7 @@ def simplifyCusps(finite_mfld):
 @
 To implement the $T^2\times I$ test,
 now we just need to implement a routine
-as described in \cite{Me}. We need to
+as described in \cite{Har14}. We need to
 first make sure the manifold is irreducible
 and $\partial$-incompressible. There isn't
 at present an explicit method for irreducibility
@@ -744,19 +745,8 @@ clone $N$ three times before filling
 along the three slopes. We also note
 that [[simplifyCusps]] simplifies
 all boundary components' triangulations
-as specified in \cite{Me}.
+as specified in \cite{Har14}.
 <<is $T^2 \times I$?>>=
-  if not irreducible(M):
-    return False
-  if M.hasCompressingDisc():
-    return False
-  a = findNonSeparatingAnnulus(M)
-  if a == None:
-    return False
-  mu = a.cutAlong()
-  mu.intelligentSimplify()
-  if not mu.isSolidTorus():
-    return False
   D = regina.NTriangulation(M)
   simplifyCusps(D)
   T = D.getBoundaryComponent(1)
@@ -850,47 +840,5 @@ import regina
 <<algorithm for testing hypness>>
 <<is hyp?>>
 @
-\begin{thebibliography}{9}
-\bibitem{Bonahon}
-  F. Bonahon,
-  \emph{Geometric structures on 3-manifolds},
-  Chapter 3 from \emph{Handbook of Geometric Topology},
-  ed. R. J. Daverman and R. B. Sher, Elsevier, New York, 2002.
-\bibitem{Regina}
-  B. A. Burton, R. Budney, W. Pettersson, et al.,
-  \emph{[[Regina]]: software for 3-manifold topology 
-  and normal surface theory},
-  http://regina.sourceforge.net/ , 1999--2014.
-\bibitem{Me}
-  Robert C. Haraway, III,
-  \emph{Determining hyperbolicity of 
-   multiply-cusped 3-manifolds},
-  preprint available at author's website.
-\bibitem{JT95}
-  W. Jaco and J. L. Tollefson,
-  \emph{Algorithms for the complete decomposition
-   of a closed 3-manifold},
-  Illinois J. of Math., \textbf{39}:3, Fall 1995, pp. 358--406.
-\bibitem{Kapovich}
-  M. Kapovich,
-  \emph{Hyperbolic manifolds and discrete groups},
-  Birkh\"auser, Boston, 2001.
-\bibitem{Marden}
-  A. Marden,
-  \emph{Outer circles: an introduction to hyperbolic 3-manifolds},
-  Cambridge University Press, New York, 2007.
-\bibitem{Matveev}
-  S. Matveev,
-  \emph{Algorithmic topology and classification of 3-manifolds},
-  Springer-Verlag, New York, 2003.
-\bibitem{T82}
-  W. P. Thurston,
-  \emph{Three-dimensional manifolds, Kleinian groups 
-  and hyperbolic geometry},
-  Bull. Amer. Math. Soc. (N.S.) \textbf{6}:3 (1982), 357--381.
-\bibitem{Tol98}
-  J. L. Tollefson,
-  \emph{Normal surface Q-theory},
-  Pacific J. of Math., \textbf{183}:2 (1998), 359--374.
-\end{thebibliography}
+\bibliography{resref}
 \end{document}

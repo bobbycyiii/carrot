@@ -158,17 +158,6 @@ def isT2xI(regina_mfld):
   M.intelligentSimplify()
   if not possiblyT2xI(M):
     return False
-  if not irreducible(M):
-    return False
-  if M.hasCompressingDisc():
-    return False
-  a = findNonSeparatingAnnulus(M)
-  if a == None:
-    return False
-  mu = a.cutAlong()
-  mu.intelligentSimplify()
-  if not mu.isSolidTorus():
-    return False
   D = regina.NTriangulation(M)
   simplifyCusps(D)
   T = D.getBoundaryComponent(1)
