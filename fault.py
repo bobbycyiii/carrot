@@ -11,7 +11,7 @@ def isFaultless(T):
     std = regina.NS_QUAD
     fnd = regina.NS_VERTEX
     l = nsl(T,std,fnd)
-    return hasFault(l)
+    return not hasFault(l)
 
 def hasFault(nsl):
     T = regina.Triangulation3(nsl.triangulation())
@@ -45,7 +45,9 @@ def essentialS2(surf):
     X = chop(surf)
     if len(X) == 1:
         return True
-    (L,R) = X
+    (LL, RR) = X
+    L = regina.Triangulation3(LL)
+    R = regina.Triangulation3(RR)
     if not (L.isBall() or R.isBall()):
         return True
     else:

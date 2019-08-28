@@ -124,9 +124,9 @@ if __name__ == "__main__":
                     hypNames[hit] = []
                 hypNames[hit].append((gluing,isoSig))
         elif fault.isFaultless(M):
-            isoSigs[isoSig] = str(gluing) + ": not hyp: has fault"
+            isoSigs[isoSig] = str(gluing) + ": hyperbolic: faultless"
         else:
-            isoSigs[isoSig] = str(gluing) + ": not hyp: faultless"
+            isoSigs[isoSig] = str(gluing) + ": not hyp: has fault"
         print isoSigs[isoSig]
         x = f.readline()
         continue
