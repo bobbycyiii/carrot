@@ -14,14 +14,29 @@ def isCommonAxisEquation(expr):
     l = expr.terms()
     return len(l) == 2
 
-def isCommonAxisPresentation(pres):
-    if G.countGenerators() == 2:
-        for i in range(G.countRelations()):
-            if isCommonAxisCommutator(G.relation(i)):
-                return True
-            if isCommonAxisEquation(G.relation(i)):
-                return True
-    return False
+def isCommonAxisPresentation(G):
+    adjSet = {}
+    for g in range(G.countGenerators()):
+        adjSet[g] = set()
+    for i in range(G.countRelations()):
+        r = G.relation(i)
+        a = r.generator(0)
+        b = r.generator(1)
+        if isCommonAxisCommutator(r) or isCommonAxisEquation(r):
+            adjSet[a].add(b)
+            adjSet[b].add(a)
+    comp = set([0,])
+    boundary = adjSet[0]
+    while len(boundary) > 0:
+        newboundary = set()
+        for v in boundary:
+            comp.add(v)
+        for v in boundary:
+            for w in adjSet[v]:
+                if not w in comp:
+                    newboundary.add(w)
+        boundary = newboundary
+    return len(comp) == G.countGenerators()
 
 def addDipyramid(T,n):
     N = T.size()
@@ -96,6 +111,8 @@ if __name__ == "__main__":
     x = f.readline()
     isoSigs = {}
     hypNames = {}
+    badGroups = 0
+    faulty = 0
     while x != '':
         if x[0] == '<':
             x = f.readline()
@@ -109,6 +126,7 @@ if __name__ == "__main__":
             pass
         elif badGroup(G):
             isoSigs[isoSig] = str(gluing) + ": not hyp: bad group"
+            badGroups = badGroups+1
         elif M.hasStrictAngleStructure():
             h = regina.Census.lookup(M)
             x = 0
@@ -127,7 +145,8 @@ if __name__ == "__main__":
             if fault.isFaultless(M):
                 isoSigs[isoSig] = str(gluing) + ": hyperbolic: faultless"
             else:
-                isoSigs[isoSig] = str(gluing) + ": not hyp: has fault"
+                isoSigs[isoSig] = str(gluing) + ": not hyp: has fault: " + isoSig
+                faulty = faulty + 1
         print isoSigs[isoSig]
         x = f.readline()
         continue
@@ -146,3 +165,4 @@ if __name__ == "__main__":
                 outStr = outStr + " " + str(i)
             outStr = outStr + "; " + isoSig + " |"
         print outStr
+    print "There were {0} bad groups and {1} faulty manifolds without obviously bad groups.".format(badGroups, faulty)
