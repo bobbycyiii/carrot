@@ -123,10 +123,13 @@ if __name__ == "__main__":
                 if not hit in hypNames:
                     hypNames[hit] = []
                 hypNames[hit].append((gluing,isoSig))
-        elif fault.isFaultless(M):
-            isoSigs[isoSig] = str(gluing) + ": hyperbolic: faultless"
         else:
-            isoSigs[isoSig] = str(gluing) + ": not hyp: has fault"
+            M.idealToFinite()
+            M.intelligentSimplify()
+            if fault.isFaultless(M):
+                isoSigs[isoSig] = str(gluing) + ": hyperbolic: faultless"
+            else:
+                isoSigs[isoSig] = str(gluing) + ": not hyp: has fault"
         print isoSigs[isoSig]
         x = f.readline()
         continue

@@ -5,7 +5,8 @@ def isFaultless(T):
     # Validity follows from orientability.
     # assert isMaterial(T) 
     # assert T.isOrientable()
-    # assert T.hasRealBoundary()
+    assert T.hasRealBoundary()
+    # If T is ideal, this routine can segfault!
     
     nsl = regina.NormalSurfaces.enumerate
     std = regina.NS_QUAD
