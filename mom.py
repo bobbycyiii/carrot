@@ -54,7 +54,7 @@ def makeDipyramids(sig):
         addDipyramid(T,ni)
     return T
     
-def whichFace(label,n):
+def milleyWhichFace(label,n):
     if label < n:
         tet, face = label, 0
     else:
@@ -67,14 +67,23 @@ def milleyGluing(gluing):
     assert len(cayley) == 2*n
     M = makeDipyramids(sig)
     for i in range(2*n):
-        (me,myFace) = whichFace(i,n)
-        (you,yourFace) = whichFace(cayley[i],n)
+        (me,myFace) = milleyWhichFace(i,n)
+        (you,yourFace) = milleyWhichFace(cayley[i],n)
         if myFace == yourFace:
             sigma = regina.Perm4(2,3)
         else:
             sigma = regina.Perm4(0,1)
         M.tetrahedron(me).join(myFace,M.tetrahedron(you),sigma)
     return M
+
+def milleyGluingToString(gluing):
+    outStr = "("
+    for i in gluing[0]:
+        outStr = outStr + str(i)
+    outStr = outStr + "):"
+    for i in gluing[1]:
+        outStr = outStr + " " + str(i)
+    return outStr
 
 def getSig(s):
     (psig,paren,rest) = s.partition(')')
@@ -111,6 +120,7 @@ if __name__ == "__main__":
     x = f.readline()
     isoSigs = {}
     hypNames = {}
+    nonhyperbolics = 0
     badGroups = 0
     faulty = 0
     while x != '':
@@ -120,49 +130,50 @@ if __name__ == "__main__":
         gluing = (getSig(x),getTuple(x))
         M = milleyGluing(gluing)
         M.intelligentSimplify()
-        isoSig = M.isoSig()
         G = M.fundamentalGroup()
-        if isoSig in isoSigs:
-            pass
-        elif badGroup(G):
-            isoSigs[isoSig] = str(gluing) + ": not hyp: bad group"
-            badGroups = badGroups+1
+        # if isoSig in isoSigs:
+        #    pass
+        if badGroup(G):
+            # The following assertion checks that we get the same result as Milley did for this gluing.
+            assert not "geometric" in x
+            print milleyGluingToString(gluing) + ": not hyperbolic: common axis presentation"
+            badGroups = badGroups + 1
+            nonhyperbolics = nonhyperbolics + 1
         elif M.hasStrictAngleStructure():
+            # The following assertion checks that we get the same result as Milley did for this gluing.
+            assert "geometric" in x
             h = regina.Census.lookup(M)
-            x = 0
+            j = 0
             while h.empty():
-                M.simplifyExhaustive(x)
+                M.simplifyExhaustive(j)
                 h = regina.Census.lookup(M)
-                x = x + 1
-            else:
-                hit = h.first().name().split(' ')[0]
-                sigOut = str(gluing) + ": hyperbolic: census"
-                isoSigs[isoSig] = sigOut + ": " + hit
-                if not hit in hypNames:
-                    hypNames[hit] = []
-                hypNames[hit].append((gluing,isoSig))
+                j = j + 1
+            hit = h.first().name().split(' ')[0]
+            print milleyGluingToString(gluing) + ": is hyperbolic: census: " + hit
+            if not hit in hypNames:
+                hypNames[hit] = []
+            hypNames[hit].append((gluing,M.isoSig()))
         else:
             if fault.isFaultless(M):
-                isoSigs[isoSig] = str(gluing) + ": hyperbolic: faultless"
+                # This never happens for Mom-4s.
+                print milleyGluingToString(gluing) + ": is hyperbolic: faultless"
             else:
-                isoSigs[isoSig] = str(gluing) + ": not hyp: has fault: " + isoSig
+                # The following assertion checks that we get the same result as Milley did for this gluing.
+                assert not "geometric" in x
+                print milleyGluingToString(gluing) + ": not hyperbolic: has fault: " + M.isoSig()
                 faulty = faulty + 1
-        print isoSigs[isoSig]
+                nonhyperbolics = nonhyperbolics + 1
         x = f.readline()
         continue
     hN = list(hypNames)
     hN.sort()
     for hit in hN:
-        outStr = hit + "|"
+        outStr = hit + " |"
         for p in hypNames[hit]:
             (gluing,isoSig) = p
-            (sig,cayley) = gluing
-            outStr = outStr + " ("
-            for i in sig:
-                outStr = outStr + str(i)
-            outStr = outStr + "):"
-            for i in cayley:
-                outStr = outStr + " " + str(i)
-            outStr = outStr + "; " + isoSig + " |"
+            outStr = outStr + " " + milleyGluingToString(gluing) + "; " + isoSig + " |"
         print outStr
-    print "There were {0} bad groups and {1} faulty manifolds without obviously bad groups.".format(badGroups, faulty)
+    print "Results for {0}:".format(filename)
+    print "There are {0} hyperbolic Mom-4 manifolds up to homeomorphism.".format(len(hN))
+    print "There were {0} nonhyperbolic gluings.".format(nonhyperbolics)
+    print "There were {0} common axis presentations and {1} other manifolds with faults.".format(badGroups, faulty)
