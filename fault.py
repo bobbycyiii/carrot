@@ -5,33 +5,38 @@ def isFaultless(T):
     # Validity follows from orientability.
     # assert isMaterial(T) 
     # assert T.isOrientable()
-    assert T.hasRealBoundary()
-    # If T is ideal, this routine can segfault!
     
     nsl = regina.NormalSurfaces.enumerate
-    std = regina.NS_QUAD
-    fnd = regina.NS_VERTEX
-    l = nsl(T,std,fnd)
-    return not hasFault(l)
-
-def hasFault(nsl):
-    T = regina.Triangulation3(nsl.triangulation())
-    def has(pred):
-        N = nsl.size()
+    std = regina.NS_STANDARD
+    fnd = regina.NS_FUNDAMENTAL
+    sfl = nsl(T,std,fnd)
+    
+    def has(L, pred):
+        N = L.size()
         for i in range(N):
-            x = nsl.surface(i)
+            x = L.surface(i)
             if pred(x):
                 return True
         else:
             return False
-    if has(smallNonOrientable) \
-       or has(essentialS2) \
+        
+    if has(sfl,smallNonOrientable) \
+       or has(sfl,essentialS2) \
        or T.hasCompressingDisc() \
-       or has(essentialT2) \
-       or has(seifertA2):
-        return True
-    else:
+       or has(sfl,essentialT2):
         return False
+
+    quad = regina.NS_QUAD
+    vtx = regina.NS_VERTEX
+    matT = regina.Triangulation3(T)
+    matT.idealToFinite()
+    matT.intelligentSimplify()
+    qvl = nsl(matT,quad,vtx)
+
+    if has(qvl, seifertA2):
+        return False
+
+    return True
     
 def smallNonOrientable(surf):
     if surf.eulerChar() >= 0 \

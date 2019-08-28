@@ -124,8 +124,6 @@ if __name__ == "__main__":
                     hypNames[hit] = []
                 hypNames[hit].append((gluing,isoSig))
         else:
-            M.idealToFinite()
-            M.intelligentSimplify()
             if fault.isFaultless(M):
                 isoSigs[isoSig] = str(gluing) + ": hyperbolic: faultless"
             else:
