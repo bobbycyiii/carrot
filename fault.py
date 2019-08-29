@@ -26,14 +26,12 @@ def isFaultless(T):
        or has(sfl,essentialT2):
         return False
 
-    quad = regina.NS_QUAD
-    vtx = regina.NS_VERTEX
     matT = regina.Triangulation3(T)
     matT.idealToFinite()
     matT.intelligentSimplify()
-    qvl = nsl(matT,quad,vtx)
+    stlp = nsl(matT,std,fund)
 
-    if has(qvl, seifertA2):
+    if has(stlp, seifertA2):
         return False
 
     return True
